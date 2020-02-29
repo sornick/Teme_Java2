@@ -1,1 +1,52 @@
 
+package callingconstructor;
+
+public class Ape extends Primate {
+	private int weigth;
+
+	public Ape(String color,int weigth) {
+		super();
+		this.weigth = weigth;
+		System.out.println("Ape from class Ape has " +" " + color + " color " + weigth + " weigth");
+	}
+
+
+}
+
+package callingconstructor;
+
+public class Cimpanzeu extends Ape{
+	public Cimpanzeu(String color, int weigth) {
+		super(color, weigth);
+	}	
+
+	public static void main(String[] args) {
+		Ape a = new Cimpanzeu("blue", 120);		
+		Primate p = new Cimpanzeu("white", 25);
+		Primate pr = new Primate();
+		pr.Primate("brown");
+		p.Primate("Yellow");
+	}		
+}
+package callingconstructor;
+
+//to do: adauga parametru in constructorul clasei Primate si modifica restul claselor;
+
+public class Primate {
+	private String color;
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public void Primate(String color) {
+
+		this.setColor(color);
+		System.out.println("Primate from class Primate: " + color  );
+	}
+
+}
