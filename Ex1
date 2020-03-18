@@ -1,0 +1,54 @@
+package ex1;
+
+public class Cafea {	
+
+
+	public static void main(String[] args) {
+		
+		Lapte la = new Lapte(0,1.5, 3);
+		Zahar z = new Zahar();
+		Zahar za = new Zahar();
+		z.setZahar("zahar alb");
+		za.setZahar("zahar brun");
+		System.out.println("The coffee will contain: ");
+		System.out.println(z.getZahar()+ " and " + za.getZahar());
+		System.out.println("plus, fat percentages as follows: ");
+		System.out.println(la.cantitate1 + " ; " +la.cantitate2 + " ; " + la.cantitate3);		
+	}
+}
+package ex1;
+
+public class Ingredient {
+	protected int cantitate1;
+	protected double cantitate2;
+	protected int cantitate3;
+	public Ingredient(int cantitate1, double cantitate2, int cantitate3) {
+		super();
+		this.cantitate1 = cantitate1;
+		this.cantitate2 = cantitate2;
+		this.cantitate3 = cantitate3;
+	}		
+	}
+  package ex1;
+
+public class Lapte extends Ingredient {		
+	
+	public Lapte(int cantitate1, double cantitatea2, int cantitate3) {
+		super(cantitate1, cantitatea2, cantitate3);
+		
+	}		
+	}	
+	package ex1;
+
+public class Zahar {
+	private String zahar;
+
+	public String getZahar() {
+		return zahar;
+	}
+	public void setZahar(String zahar) {
+		this.zahar = zahar;
+	}
+}	
+
+
