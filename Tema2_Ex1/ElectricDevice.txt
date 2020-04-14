@@ -1,0 +1,37 @@
+package T2E1;
+
+public class ElectricDevice extends Aquisition {
+
+	private String name;
+	private int guarantee;
+
+	public ElectricDevice() {}
+
+	public ElectricDevice(String name, int guarantee) {
+		this.name = name;
+		this.guarantee = guarantee;
+	}
+	public String getName() {
+		return name;
+	}
+
+	public int getGuarantee() {
+		return guarantee;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setGuarantee(int guarantee) {
+		this.guarantee = guarantee;
+	}
+	@Override
+	public String toString() {
+		return "ElectricDevice name = " + name + ", guarantee = " + guarantee + " years;" + " Price = " + getPrice() + " ron";
+	}
+
+}
+
+
+

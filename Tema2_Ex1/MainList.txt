@@ -1,0 +1,81 @@
+package T2E1;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+
+public class MainList {	
+
+	public static void main(String[] args) {
+		Aquisition aq1 = new Aliment("Ice cream", 14);
+		Aquisition aq2 = new ElectricDevice("Grill", 3);
+		Aquisition aq3 = new Aliment("Apple", 21);
+		Aquisition aq4 = new ElectricDevice("Oven", 2);
+		Aquisition aq5 = new Aliment("Lemon", 19);
+		Aquisition aq6 = new Aliment("Sugar", 30);
+		Aquisition aq7 = new ElectricDevice("Washing machine", 1);
+		Aquisition aq8 = new Aliment("Orange", 15);
+		Aquisition aq9 = new Aliment("Ananas ", 23);
+		Aquisition aq10 = new Aliment("Rice", 18);
+
+		aq1.setQuantity(1);
+		aq1.setPrice(9.99);
+		aq2.setQuantity(1);
+		aq2.setPrice(100);
+		aq3.setQuantity(3);
+		aq3.setPrice(1.5);
+		aq4.setQuantity(1);
+		aq4.setPrice(80);
+		aq5.setQuantity(1);
+		aq5.setPrice(2.3);
+		aq6.setQuantity(3);
+		aq6.setPrice(5.5);
+		aq7.setQuantity(1);
+		aq7.setPrice(300);
+		aq8.setQuantity(1);
+		aq8.setPrice(2.6);
+		aq9.setQuantity(1);
+		aq9.setPrice(7);
+		aq10.setQuantity(1);
+		aq10.setPrice(2.8);
+
+		ArrayList<Aquisition> list = new ArrayList<Aquisition>();
+		list.add(aq1);
+		list.add(aq2);
+		list.add(aq3);
+		list.add(aq4);
+		list.add(aq5);
+		list.add(aq6);
+		list.add(aq7);
+		list.add(aq8);
+		list.add(aq9);
+		list.add(aq10);
+
+		Comparator<Aquisition> byPrice = new Comparator<Aquisition>() {
+			public int compare (Aquisition a, Aquisition b) {
+				return (int) (a.getPrice() - b.getPrice());
+			}
+		};		
+
+		Collections.sort(list, byPrice);
+
+		for(Aquisition aquisition : list) {
+			System.out.println(aquisition.toString() + " ");
+		}
+		double totalPrice = 0;
+		double sum = 0;
+		for(int i =0;i<list.size();i++) {
+			Aquisition itm = list.get(i);
+			totalPrice = itm.getQuantity() * itm.getPrice();
+			sum += totalPrice;				
+		}
+		System.out.println("The total amount is: " + sum + " ron");
+	}
+}
+
+
+
+
+
