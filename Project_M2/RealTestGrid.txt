@@ -1,0 +1,190 @@
+package students;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import java.awt.Window;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.awt.event.ActionEvent;
+
+public class RealTestGrid extends JFrame implements ActionListener{
+
+	private JPanel contentPane;
+	JLabel l;
+	JRadioButton jb[]=new JRadioButton[5];
+	JButton b1,b2;
+	ButtonGroup bg;	
+
+	float count=0,current=0,x=1,y=1,now=0; 
+
+	int m[]=new int[7];
+	static float twoDigitsFl;
+	static float twoDigitsFl1;
+	RealTestGrid(String s)	{
+		super(s);
+		l=new JLabel();
+		add(l);
+		bg=new ButtonGroup();
+		for(int i=0;i<5;i++)
+		{
+			jb[i]=new JRadioButton();	
+			add(jb[i]);
+			bg.add(jb[i]);
+		}
+		b1=new JButton("Next");
+		b2=new JButton("Result");
+
+		b1.addActionListener(this);
+		b2.addActionListener(this);
+
+		add(b1);add(b2);
+		set();
+		l.setBounds(30,40,1450,20);//20
+		jb[0].setBounds(50,80,1250,20);
+		jb[1].setBounds(50,110,1250,20);
+		jb[2].setBounds(50,140,1250,20);
+		jb[3].setBounds(50,170,1250,20);
+		b1.setBounds(80,240,100,30);
+		b2.setBounds(240,240,100,30);		
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(null);
+		setLocation(250,100);
+		setVisible(true);
+		setSize(600,550);
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource()==b1)
+		{
+			if(check())
+				count=count+1;
+			current++;
+			set();	
+			if(current==7)
+			{
+				b1.setEnabled(false);
+				b2.setText("Result");
+
+			}
+		}
+
+		{
+
+			if(current==7)
+				b2.setText("Result");
+			setVisible(false);
+			setVisible(true);
+		}
+
+		if(check()) {
+			count=count+1;
+			now=current;
+			current=m[(int) y];
+			set();
+			((JButton)e.getSource()).setEnabled(false);
+			current=now;
+		}
+
+		if(e.getActionCommand().equals("Result"))
+		{
+			if(check())
+				count=count+1;
+			current++;
+
+			JOptionPane.showMessageDialog(this,"correct answers = " + count);
+
+			float per=(count/7)*100;
+			DecimalFormat decimalFormat = new DecimalFormat("#.##");
+			twoDigitsFl = Float.valueOf(decimalFormat.format(per));
+
+			JOptionPane.showMessageDialog(this," the percentage is: " + twoDigitsFl  +" %"); //*
+			float note =((count/7)*100)/10;
+			DecimalFormat decimalFormat1 = new DecimalFormat("#.##");
+			twoDigitsFl1 = Float.valueOf(decimalFormat1.format(note));
+			JOptionPane.showMessageDialog(this," the note is: " + twoDigitsFl1) ;
+
+		}
+	}
+
+	void set()
+	{
+		jb[4].setSelected(true);
+		if(current==0)
+		{
+			l.setText("Question 1:  What is inheritance? ");
+			jb[0].setText("It is the process where one object acquires the properties of another ");jb[1].setText("inheritance is the ability of an object to take on many forms.");jb[2].setText(" inheritance is a technique to define different methods of same type ");jb[3].setText("None of the above ");	
+		}
+		if(current==1)
+		{
+			l.setText("Question 2:   What is the size of int variable?");
+			jb[0].setText("8 bit");jb[1].setText("16 bit");jb[2].setText("32 bit");jb[3].setText("64 bit");
+		}
+		if(current==2)
+		{
+			l.setText("Question 3: Can be constructor be made final?  ");
+			jb[0].setText("True");jb[1].setText("False");jb[2].setText(" Not applicable");jb[3].setText("None of the above");
+		}
+		if(current==3)
+		{
+			l.setText("Question 4: What is an Interface?");
+			jb[0].setText("An interface is an abstract method");jb[1].setText("Interface is an public class");jb[2].setText("Interface is a completely abstract class");jb[3].setText("None of the above");
+		}
+		if(current==4)
+		{
+			l.setText("Question 5:  What is the default value of Object variable?");
+			jb[0].setText("undefined");jb[1].setText("0");jb[2].setText("null");jb[3].setText("not defined");
+		}
+		if(current==5)
+		{
+			l.setText("Question 6:  What is the default value of int variable? ");
+			jb[0].setText("0");jb[1].setText("0.0");jb[2].setText("null");jb[3].setText("not defined");
+		}
+		if(current==6)
+		{
+			l.setText("Question 7:  Which of the following is true about String object? ");
+			jb[0].setText(" String is mutable");jb[1].setText("String is immutable");jb[2].setText("String is a data type");jb[3].setText("None of the above");
+		}
+
+		l.setBounds(30,40,450,20);
+		for(int i=0,j=0;i<=90;i+=30,j++)
+			jb[j].setBounds(50,80+i,1200,20);
+	}
+	boolean check()
+	{
+		if(current==0)
+			return(jb[0].isSelected());
+		if(current==1)
+			return(jb[2].isSelected());
+		if(current==2)
+			return(jb[1].isSelected());
+		if(current==3)
+			return(jb[2].isSelected());
+		if(current==4)
+			return(jb[2].isSelected());
+		if(current==5)
+			return(jb[0].isSelected());
+		if(current==6)
+			return(jb[1].isSelected());
+
+		return false;
+	}
+	public static void main(String s[])
+	{
+		new RealTestGrid("Test grila");
+	}
+}
+

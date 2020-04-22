@@ -1,0 +1,54 @@
+package students;
+
+public class PracticalTest  implements ITest{
+
+	private String  testName;
+	private String testId; 
+	private TestTypeEnum testType; 
+	private Integer implementationScore;  
+	private Integer functionalScore;  
+	
+	public PracticalTest(String testName, String testId, TestTypeEnum testType)
+	{
+		this.testName = testName;
+		this.testId = testId;
+		this.testType = testType;
+		implementationScore = 1;
+		functionalScore  = 1;
+	}
+	
+	public String  GetTestName() 
+	{
+		return testName;
+	}
+	public String GetTestId() 
+	{
+		return testId;
+	}
+	public TestTypeEnum GetTestType()
+	{
+		return testType;
+	}
+	public Integer GetTestResut() 
+	{
+		return Math.round((float)(0.5 + (implementationScore + functionalScore) / 2));
+	}
+	
+	public void SetScores(Integer implementationScore, Integer functionalScore) 
+	{
+		this.implementationScore = implementationScore;
+		this.functionalScore     = functionalScore;
+	}
+	
+	public Integer GetResult1() 
+	{
+		return implementationScore;
+	}
+	public Integer GetResult2()
+	{
+		return functionalScore;
+	}
+}
+
+
+

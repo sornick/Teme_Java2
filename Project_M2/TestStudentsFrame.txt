@@ -1,0 +1,655 @@
+package students;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JPanel;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
+import java.awt.GridBagLayout;
+import javax.swing.JTable;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import students.ComboItem;
+import students.Student;
+import tests.GridTest;
+import tests.ITest;
+import tests.PracticalTest;
+import tests.TestTypeEnum;
+
+import javax.swing.JComboBox;
+import javax.swing.JRadioButton;
+import javax.swing.JList;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JSeparator;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JScrollPane;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.Font;
+
+public class TestStudentsFrame {
+
+	private Integer index = 0;
+
+	private JFrame frmStudentsApplications;
+
+	private String studentsHeader[] = new String[] { "Id", "Name", "CNP"}; 
+	
+	private DefaultTableModel dtmStudents = new DefaultTableModel(0, 0); 
+
+	private List<Student> m_studentsList = new ArrayList<Student>();  
+	
+	private JTextField textField_name;
+	private JTextField textField_cnp;
+	private JTable table;
+	private JTextField textField_cnpToDelete;
+
+	private JLabel lblNewLabel_error;
+	private JLabel lblNewLabel_deleteError;
+	private JTextField textField_tests_nota1;
+	private JTextField textField_tests_nota2;
+	private JTextField textField_tests_id;
+	private JTextField textField_tests_delete_id;
+	private JLabel lblNewLabel_tests_cnp;
+
+	// tests
+
+	private Integer m_testsIdx = 0;
+	private TestTypeEnum m_testType = TestTypeEnum.TT_GRID;
+	private JComboBox<ComboItem> comboBox_students;
+	private ButtonGroup  radioButtonGroup;
+	private JRadioButton rdbtnNewRadioButton_tests_practic;
+	private JRadioButton rdbtnNewRadioButton_tests_grila;
+	private JLabel lblNewLabel_tests_nota1;
+	private JLabel lblNewLabel_tests_nota2;
+	private JLabel lblNewLabel_tests_error_add;
+	private JLabel lblNewLabel_delete_error;
+	// tests list
+	private List<ITest> m_testsList = new ArrayList<ITest>();  
+	// tests table
+	private JTable m_testsTable;
+	private String m_testsHeader[] = new String[] { "Id", "TestID", "Student", "Tip", "Nota1", "Nota2", "Result"};
+	private DefaultTableModel m_dtmTests = new DefaultTableModel(0, 0);
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					TestStudentsFrame window = new TestStudentsFrame();
+					window.frmStudentsApplications.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public TestStudentsFrame() {
+		initialize();
+	}
+
+	private Student GetStudentByCNP(String cnp) 
+	{
+		Student foundStudent = null;
+		//m_studentsList.forEach(student->  );
+		for (Student student : m_studentsList) {
+			if (student.getCNP().equalsIgnoreCase(cnp))
+			{
+				foundStudent = student;
+				break;
+			}	
+		}
+
+		return foundStudent;
+	}
+
+	private ITest GetTestByUniqueId(String testId) 
+	{
+		ITest foundTest = null;
+		for (ITest test : m_testsList) {
+			if (test.GetTestId().equalsIgnoreCase(testId))
+			{
+				foundTest = test;
+				break;
+			}
+		}
+		return foundTest;
+	}
+
+	private void DeleteStudent(Student student) 
+	{
+		// remove from list
+		ListIterator<Student> studentListIterator = m_studentsList.listIterator();
+		while (studentListIterator.hasNext()) {
+			if (studentListIterator.next().getCNP().equalsIgnoreCase(student.getCNP()))
+			{
+				studentListIterator.remove();
+				break;
+			}
+		}
+
+		for( int i = dtmStudents.getRowCount() - 1; i >= 0; i-- )
+		{
+			String idString = (String)dtmStudents.getValueAt(i, 0); 
+			if (idString.equalsIgnoreCase(student.getID().toString())) 
+			{
+				dtmStudents.removeRow(i);
+				break;
+			}
+		}
+
+	}
+
+	private void DeleteTest(ITest test) 
+	{
+		// remove from the list
+		ListIterator<ITest> testListIterator = m_testsList.listIterator();
+
+		while (testListIterator.hasNext()) {
+			if (testListIterator.next().GetTestId().equalsIgnoreCase(test.GetTestId()))
+			{
+				testListIterator.remove();
+				break;
+			}
+		}
+
+		for( int i = m_dtmTests.getRowCount() - 1; i >= 0; i-- )
+		{
+			String idString = (String)m_dtmTests.getValueAt(i, 1); 
+			if (idString.equalsIgnoreCase(test.GetTestId().toString())) 
+			{
+				m_dtmTests.removeRow(i);
+				break;
+			}
+		} 
+	}
+
+	private void CleanInputTexts()
+	{
+		textField_name.setText("");
+		textField_cnp.setText("");
+		lblNewLabel_error.setText("");
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmStudentsApplications = new JFrame();
+		frmStudentsApplications.setTitle("Students Application");
+		frmStudentsApplications.setBounds(100, 100, 851, 523);
+		frmStudentsApplications.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		frmStudentsApplications.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+
+				if (comboBox_students != null)
+				{
+					comboBox_students.removeAllItems();
+					ListIterator<Student> studentListIterator = m_studentsList.listIterator();
+					while (studentListIterator.hasNext()) {
+						Student student = (Student)studentListIterator.next();
+						comboBox_students.addItem(new ComboItem(student.getName(), student.getCNP()));
+					}
+				}
+			}
+		});
+
+
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Students", null, panel, null);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0};
+		gbl_panel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+
+		JPanel panel_4 = new JPanel();
+		panel_4.setPreferredSize(new Dimension(200, 300));
+		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
+		gbc_panel_4.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_4.fill = GridBagConstraints.BOTH;
+		gbc_panel_4.gridx = 0;
+		gbc_panel_4.gridy = 1;
+		panel.add(panel_4, gbc_panel_4);
+
+		JLabel lblLabel_name = new JLabel("Name");
+		lblLabel_name.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		textField_name = new JTextField();
+		textField_name.setColumns(10);
+
+		JLabel lblLabel_cnp = new JLabel("CNP");
+		lblLabel_cnp.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		lblNewLabel_error = new JLabel("");
+
+		textField_cnp = new JTextField();
+		textField_cnp.setColumns(10);
+
+		JButton btnButton_addStudent = new JButton("Add student");
+		btnButton_addStudent.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnButton_addStudent.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				String name  = textField_name.getText();
+				String cnp   = textField_cnp.getText();
+				String error = "";
+				if ((name == null)||(name.equalsIgnoreCase("")))
+				{
+					error = "Missing name !";
+				} 
+				else if ((cnp == null)||(cnp.equalsIgnoreCase("")))
+				{
+					error = "Missing CNP !";
+				}
+				else
+				{
+					Student foundStudent = GetStudentByCNP(cnp);
+					if (foundStudent == null) {
+						Integer id = index; 
+						index++; 
+						Student student = new Student(id, name, cnp);
+						m_studentsList.add(student);
+
+						dtmStudents.addRow(new Object[] { student.getID().toString(), student.getName(), student.getCNP()});
+
+						CleanInputTexts();
+					} 
+					else 
+					{
+						error = "CNP already found !";
+					}
+				}
+
+				lblNewLabel_error.setText(error);
+
+			}
+		});
+
+		JLabel lblLabel_deleteCNP = new JLabel("CNP to delete");
+		lblLabel_deleteCNP.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		textField_cnpToDelete = new JTextField();
+		textField_cnpToDelete.setColumns(10);
+
+		JButton btnButton_deleteStudent = new JButton("Delete student");
+		btnButton_deleteStudent.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnButton_deleteStudent.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				String cnp = textField_cnpToDelete.getText();
+				boolean bIsValidCNP = true;  //CheckValidCNP(cnp);
+				Student student = GetStudentByCNP(cnp);
+				String errorString  = "";
+
+				if (student == null) 
+				{
+					errorString = "CNP not found";
+				} else {
+					DeleteStudent(student);
+				}
+
+				lblNewLabel_deleteError.setText(errorString);
+
+			}
+		});
+
+		lblNewLabel_deleteError = new JLabel("");
+		GroupLayout gl_panel_4 = new GroupLayout(panel_4);
+		gl_panel_4.setHorizontalGroup(
+				gl_panel_4.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_4.createSequentialGroup()
+						.addGap(59)
+						.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnButton_addStudent)
+								.addComponent(lblNewLabel_deleteError)
+								.addComponent(btnButton_deleteStudent)
+								.addComponent(lblNewLabel_error)
+								.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING, false)
+										.addGroup(Alignment.TRAILING, gl_panel_4.createSequentialGroup()
+												.addComponent(lblLabel_deleteCNP)
+												.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(textField_cnpToDelete, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+										.addGroup(gl_panel_4.createSequentialGroup()
+												.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
+														.addComponent(lblLabel_name)
+														.addComponent(lblLabel_cnp))
+												.addGap(71)
+												.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
+														.addComponent(textField_cnp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+														.addComponent(textField_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
+						.addContainerGap(37, Short.MAX_VALUE))
+				);
+		gl_panel_4.setVerticalGroup(
+				gl_panel_4.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_4.createSequentialGroup()
+						.addGap(43)
+						.addGroup(gl_panel_4.createParallelGroup(Alignment.TRAILING)
+								.addComponent(textField_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblLabel_name))
+						.addGap(40)
+						.addGroup(gl_panel_4.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblLabel_cnp)
+								.addComponent(textField_cnp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(42)
+						.addComponent(lblNewLabel_error)
+						.addGap(26)
+						.addComponent(btnButton_addStudent)
+						.addPreferredGap(ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+						.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_4.createSequentialGroup()
+										.addComponent(textField_cnpToDelete, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addGap(28)
+										.addComponent(lblNewLabel_deleteError))
+								.addComponent(lblLabel_deleteCNP))
+						.addGap(34)
+						.addComponent(btnButton_deleteStudent)
+						.addGap(42))
+				);
+		panel_4.setLayout(gl_panel_4);
+
+		JPanel panel_3 = new JPanel();
+		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
+		gbc_panel_3.fill = GridBagConstraints.BOTH;
+		gbc_panel_3.gridx = 1;
+		gbc_panel_3.gridy = 1;
+		panel.add(panel_3, gbc_panel_3);
+		panel_3.setLayout(new BorderLayout(0, 0));
+
+		dtmStudents.setColumnIdentifiers(studentsHeader); 
+
+
+		table = new JTable();
+		table.setModel(dtmStudents); //
+		table.setBounds(30,40,200,800);
+		table.setSize(300, 200);
+		//panel_3.add(table);
+
+		JScrollPane scrollPane = new JScrollPane(table);
+		panel_3.add(scrollPane);
+
+		JPanel panel_1 = new JPanel();
+
+		tabbedPane.addTab("Tests", null, panel_1, null);
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[]{0, 0, 0};
+		gbl_panel_1.rowHeights = new int[]{0, 0, 0};
+		gbl_panel_1.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		panel_1.setLayout(gbl_panel_1);
+
+		JPanel panel_5 = new JPanel();
+		panel_5.setPreferredSize(new Dimension(200,300));
+		panel_5.setLayout(null);
+
+		GridBagConstraints gbc_panel_5 = new GridBagConstraints();
+		gbc_panel_5.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_5.fill = GridBagConstraints.BOTH;
+		gbc_panel_5.gridx = 0;
+		gbc_panel_5.gridy = 1;
+		panel_1.add(panel_5, gbc_panel_5);
+
+		comboBox_students = new JComboBox();
+		comboBox_students.setBounds(20, 11, 98, 20);
+		comboBox_students.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				ComboItem cb = (ComboItem)comboBox_students.getSelectedItem(); 
+				if (cb != null)
+				{
+					lblNewLabel_tests_cnp.setText(cb.getValue());
+				}
+			}
+		});
+
+		rdbtnNewRadioButton_tests_practic = new JRadioButton("Test practic", false);
+		rdbtnNewRadioButton_tests_practic.setBounds(20, 207, 97, 23);
+		rdbtnNewRadioButton_tests_practic.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtnNewRadioButton_tests_practic.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				//
+				int state = e.getStateChange();
+				if (state != 0)
+				{		
+					m_testType = TestTypeEnum.TT_PRACTICAL;
+					lblNewLabel_tests_nota1.setText("Nota implementare");
+					lblNewLabel_tests_nota2.setText("Nota functionare");
+				}
+			}
+		});
+
+		rdbtnNewRadioButton_tests_grila = new JRadioButton("Test grila", true);
+		rdbtnNewRadioButton_tests_grila.setBounds(20, 181, 81, 23);
+		rdbtnNewRadioButton_tests_grila.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtnNewRadioButton_tests_grila.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				//
+				int state = e.getStateChange();
+				if (state != 0)
+				{
+					m_testType = TestTypeEnum.TT_GRID;
+					lblNewLabel_tests_nota1.setText("Teste corecte");
+					lblNewLabel_tests_nota2.setText("Total teste");
+				}
+			}
+		});
+
+		radioButtonGroup = new ButtonGroup();
+		radioButtonGroup.add(rdbtnNewRadioButton_tests_practic);
+		radioButtonGroup.add(rdbtnNewRadioButton_tests_grila);
+
+		lblNewLabel_tests_nota1 = new JLabel("Puncte realizate");
+		lblNewLabel_tests_nota1.setBounds(20, 107, 98, 15);
+		lblNewLabel_tests_nota1.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		lblNewLabel_tests_nota2 = new JLabel("Total puncte");
+		lblNewLabel_tests_nota2.setBounds(20, 145, 98, 15);
+		lblNewLabel_tests_nota2.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		textField_tests_nota1 = new JTextField();
+		textField_tests_nota1.setBounds(147, 107, 90, 20);
+		textField_tests_nota1.setColumns(10);
+
+		textField_tests_nota2 = new JTextField();
+		textField_tests_nota2.setBounds(147, 145, 90, 20);
+		textField_tests_nota2.setColumns(10);
+
+		JLabel lblNewLabel_tests_id = new JLabel("TestID");
+		lblNewLabel_tests_id.setBounds(20, 69, 40, 15);
+		lblNewLabel_tests_id.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		textField_tests_id = new JTextField();
+		textField_tests_id.setBounds(147, 69, 90, 20);
+		textField_tests_id.setColumns(10);
+
+		JButton btnNewButton_tests_add = new JButton("Add test");
+		btnNewButton_tests_add.setBounds(20, 239, 111, 23);
+		btnNewButton_tests_add.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		btnNewButton_tests_add.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				String testId = textField_tests_id.getText();
+				Integer nota1 = Integer.parseInt(textField_tests_nota1.getText());
+				Integer nota2 = Integer.parseInt(textField_tests_nota2.getText());
+
+				ITest test = GetTestByUniqueId(testId); 
+
+				if (test == null)
+				{
+					Student student = GetStudentByCNP(lblNewLabel_tests_cnp.getText());
+					if (m_testType == TestTypeEnum.TT_GRID)
+					{
+						test = new GridTest("", testId, m_testType);
+						test.SetScores(nota1, nota2);
+
+						m_testsList.add(test);
+						//{ "Id", "TestID", "Student", "Tip", "Nota1", "Nota2"};
+						m_dtmTests.addRow(new Object[] { "" + m_testsIdx, 
+								test.GetTestId(), 
+								student.getName(), "GRID", "" + 
+										test.GetResult1().toString(), 
+										test.GetResult2().toString(), 
+										test.GetTestResut().toString()});
+						m_testsIdx++;
+
+					}
+					else if (m_testType == TestTypeEnum.TT_PRACTICAL)
+					{
+						test = new PracticalTest("", testId, m_testType);
+						test.SetScores(nota1, nota2);
+						m_testsList.add(test);
+						//{ "Id", "TestID", "Student", "Tip", "Nota1", "Nota2"};
+						m_dtmTests.addRow(new Object[] { "" + m_testsIdx, 
+								test.GetTestId(), 
+								student.getName(), 
+								"PRACTICAL",
+								test.GetResult1().toString(), 
+								test.GetResult2().toString(), 
+								test.GetTestResut().toString()});
+						m_testsIdx++;					
+					}
+				} else {
+					lblNewLabel_tests_error_add.setText("Test ID alredy found !");
+				}
+			}
+		});
+
+		JLabel lblNewLabel_tests_delete_id = new JLabel("TestID");
+		lblNewLabel_tests_delete_id.setBounds(24, 290, 40, 15);
+		lblNewLabel_tests_delete_id.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		textField_tests_delete_id = new JTextField();
+		textField_tests_delete_id.setBounds(74, 288, 86, 20);
+		textField_tests_delete_id.setColumns(10);
+
+		lblNewLabel_tests_error_add = new JLabel("");
+		lblNewLabel_tests_error_add.setBounds(20, 239, 0, 0);
+
+		lblNewLabel_delete_error = new JLabel("");
+		lblNewLabel_delete_error.setBounds(20, 344, 0, 0);
+
+		JButton btnNewButton_tests_delete = new JButton("Delete test");
+		btnNewButton_tests_delete.setBounds(20, 354, 111, 23);
+		btnNewButton_tests_delete.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnNewButton_tests_delete.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				String testId = textField_tests_delete_id.getText();
+				ITest test = GetTestByUniqueId(testId);
+				String error = "";
+
+				if (test != null)
+				{
+					DeleteTest(test);
+				} else {
+					error = "TestID not found !";
+				}
+
+				lblNewLabel_delete_error.setText(error);
+			}
+		});
+
+		lblNewLabel_tests_cnp = new JLabel("No CNP");
+		lblNewLabel_tests_cnp.setBounds(178, 13, 48, 15);
+		lblNewLabel_tests_cnp.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		JLabel lblWithCnp = new JLabel("CNP");
+		lblWithCnp.setBounds(136, 13, 24, 15);
+		lblWithCnp.setFont(new Font("Tahoma", Font.BOLD, 12));
+		panel_5.add(btnNewButton_tests_delete);
+		panel_5.add(lblNewLabel_delete_error);
+		panel_5.add(lblNewLabel_tests_error_add);
+		panel_5.add(lblNewLabel_tests_delete_id);
+		panel_5.add(textField_tests_delete_id);
+		panel_5.add(btnNewButton_tests_add);
+		panel_5.add(rdbtnNewRadioButton_tests_practic);
+		panel_5.add(lblNewLabel_tests_nota1);
+		panel_5.add(lblNewLabel_tests_id);
+		panel_5.add(comboBox_students);
+		panel_5.add(lblNewLabel_tests_nota2);
+		panel_5.add(rdbtnNewRadioButton_tests_grila);
+		panel_5.add(textField_tests_nota2);
+		panel_5.add(textField_tests_nota1);
+		panel_5.add(lblWithCnp);
+		panel_5.add(lblNewLabel_tests_cnp);
+		panel_5.add(textField_tests_id);
+
+		JButton btnRealTest = new JButton("Real test");
+		btnRealTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				RealTestGrid r = new RealTestGrid(null);
+				r.setVisible(true);
+			}
+		});
+		btnRealTest.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnRealTest.setBounds(158, 239, 101, 23);
+		panel_5.add(btnRealTest);
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(Color.blue);
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 1;
+		gbc_panel_2.gridy = 1;
+		panel_1.add(panel_2, gbc_panel_2);
+		panel_2.setLayout(new BorderLayout(0, 0));
+
+		m_dtmTests.setColumnIdentifiers(m_testsHeader);
+
+		m_testsTable = new JTable();
+		m_testsTable.setModel(m_dtmTests);
+		m_testsTable.setBounds(30,40,300,800);
+		m_testsTable.setSize(200, 300);
+
+		JScrollPane scrollPaneTests = new JScrollPane(m_testsTable);
+		panel_2.add(scrollPaneTests);
+	}
+}
+
+
+
+
+

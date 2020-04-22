@@ -1,0 +1,6 @@
+package students;
+
+public enum TestTypeEnum {
+	TT_GRID,
+	TT_PRACTICAL
+}
