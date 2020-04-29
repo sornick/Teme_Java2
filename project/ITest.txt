@@ -1,0 +1,14 @@
+package tests;
+
+import tests.TestTypeEnum;
+
+public interface ITest {
+	public String  GetTestName();
+	public String  GetTestId();
+	public TestTypeEnum GetTestType();
+	public Integer GetTestResut();
+	public Integer GetResult1();
+	public Integer GetResult2();
+	public void SetScores(Integer nbOfCorrectQuestions, Integer nbOfQuestions);
+
+}
